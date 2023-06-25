@@ -37,9 +37,8 @@ client.login(config.lemmy.login).then((loginResponse) => {
       lastFeedItemTimes,
       token
     );
-    task.execute();
     const job = new SimpleIntervalJob(
-      feed.schedule ?? defaultSchedule,
+      { ...(feed.schedule ?? defaultSchedule), runImmediately: true },
       task,
       {}
     );
