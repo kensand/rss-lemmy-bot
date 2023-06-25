@@ -1,4 +1,5 @@
 import { Login } from "lemmy-js-client";
+import { SimpleIntervalSchedule } from "toad-scheduler";
 export interface Community {
   readonly instanceUrl: string;
   readonly communityName: string;
@@ -6,6 +7,7 @@ export interface Community {
 export interface Feed {
   readonly feedUrl: string;
   readonly lemmyCommunities: Community[];
+  readonly schedule?: SimpleIntervalSchedule;
 }
 export interface Lemmy {
   readonly login: Login;
@@ -15,4 +17,5 @@ export interface Lemmy {
 export interface Config {
   readonly lemmy: Lemmy;
   readonly feeds: Feed[];
+  readonly defaultSchedule?: SimpleIntervalSchedule;
 }
