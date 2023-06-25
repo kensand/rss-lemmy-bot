@@ -1,0 +1,20 @@
+{
+  "lemmy": {
+    "login": {
+      "username_or_email": "<your lemmy username>",
+      "password": "<your lemmy password>"
+    },
+    "instanceUrl": "<your lemmy home instance url, beginning with 'https://`"
+  },
+  "feeds": [
+    {
+      "feedUrl": "<some rss feed url>",
+      "lemmyCommunities": [
+        {
+          "communityName": "<some community name>",
+          "instanceUrl": "<some lemmy instance url, beginning with 'https://`"
+        }
+      ]
+    }
+  ]
+}

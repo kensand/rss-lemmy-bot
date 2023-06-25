@@ -1,0 +1,30 @@
+{
+  "name": "rss-lemmy-bot",
+  "version": "0.1.0",
+  "private": false,
+  "scripts": {
+    "prettier": "npx prettier --write .",
+    "eslint": "npx eslint --fix .",
+    "_pre-build": "npm run prettier && npm run eslint",
+    "build": "npm run _pre-build && tsc",
+    "start": "node ./dist/cjs/main.js"
+  },
+  "dependencies": {
+    "lemmy-js-client": "^0.18.0",
+    "node-html-markdown": "^1.3.0",
+    "rss-parser": "^3.13.0",
+    "toad-scheduler": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  },
+  "files": [
+    "./webpack/**",
+    "./dist/**"
+  ]
+}
