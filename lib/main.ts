@@ -24,19 +24,8 @@ client.login(config.lemmy.login).then((loginResponse) => {
   const scheduler = new ToadScheduler();
   const parser = new Parser<Record<string, never>, Record<string, never>>();
 
-  const lastFeedItemTimes = Object.fromEntries(
-    config.feeds.map((it) => [it.feedUrl, startTime.getTime()])
-  );
-
   config.feeds.forEach((feed) => {
-    const task = mkFeedTask(
-      startTime,
-      client,
-      feed,
-      parser,
-      lastFeedItemTimes,
-      token
-    );
+    const task = mkFeedTask(startTime, client, feed, parser, token);
     const job = new SimpleIntervalJob(
       { ...(feed.schedule ?? defaultSchedule), runImmediately: true },
       task,

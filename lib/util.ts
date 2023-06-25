@@ -8,23 +8,23 @@ export function processFeedResults(
   minTimestamp: Date,
   feedResults: Parser.Output<Record<string, never>>
 ): (Parser.Item & {
-  epochMillisTimestamp: number;
+  readonly timestamp: Date;
 })[] {
   return feedResults.items
     .map((it) => {
       return {
         ...it,
-        epochMillisTimestamp: it.isoDate
-          ? Date.parse(it.isoDate)
+        timestamp: it.isoDate
+          ? new Date(it.isoDate)
           : it.pubDate
-          ? Date.parse(it.pubDate)
-          : minTimestamp.getTime(),
+          ? new Date(it.pubDate)
+          : minTimestamp,
       };
     })
     .sort((a, b) => {
-      if (a.epochMillisTimestamp < b.epochMillisTimestamp) {
+      if (a.timestamp.getTime() < b.timestamp.getTime()) {
         return -1;
-      } else if (a.epochMillisTimestamp > b.epochMillisTimestamp) {
+      } else if (a.timestamp.getTime() > b.timestamp.getTime()) {
         return 1;
       } else {
         return 0;
@@ -35,9 +35,7 @@ export function processFeedResults(
 export async function postItem(
   client: LemmyHttp,
   c: Community,
-  item: Parser.Item & {
-    epochMillisTimestamp: number;
-  },
+  item: Parser.Item,
   title: string,
   token: string
 ) {
@@ -67,20 +65,26 @@ export function mkFeedTask(
   client: LemmyHttp,
   feed: Feed,
   parser: Parser<Record<string, never>, Record<string, never>>,
-  lastFeedItemTimes: Record<string, number>,
   authToken: string
 ) {
+  let lastItemTime = startTime;
   return new AsyncTask(feed.feedUrl, async () => {
-    console.log(`Scanning feed ${feed.feedUrl}`);
+    console.log(
+      `Scanning feed ${feed.feedUrl} with latestTime: ${lastItemTime}`
+    );
     const feedResults = await parser.parseURL(feed.feedUrl);
     const items = processFeedResults(startTime, feedResults);
     await Promise.all(
       items.map(async (item) => {
-        const itemDate = item.isoDate ? Date.parse(item.isoDate) : undefined;
-        const lastTime = lastFeedItemTimes[feed.feedUrl];
         const title = item.title;
-        if (title && itemDate && lastTime && itemDate > lastTime) {
-          console.log(`Posting item ${title} from ${feed.feedUrl}`);
+        if (
+          title &&
+          item.timestamp &&
+          item.timestamp.getTime() > lastItemTime.getTime()
+        ) {
+          console.log(
+            `Posting item ${title} from ${feed.feedUrl} published at ${item.timestamp}`
+          );
           await Promise.all(
             feed.lemmyCommunities.map(async (community) => {
               await postItem(client, community, item, title, authToken);
@@ -90,10 +94,8 @@ export function mkFeedTask(
       })
     );
 
-    const lastTime =
-      items.length > 0 ? items[items.length - 1]?.isoDate : undefined;
-    lastFeedItemTimes[feed.feedUrl] = lastTime
-      ? Date.parse(lastTime)
-      : lastFeedItemTimes[feed.feedUrl] ?? startTime.getTime();
+    const newLastTime =
+      items.length > 0 ? items[items.length - 1]?.timestamp : undefined;
+    lastItemTime = newLastTime ? newLastTime : lastItemTime ?? startTime;
   });
 }
