@@ -7,6 +7,7 @@
     "eslint": "npx eslint --fix .",
     "_pre-build": "npm run prettier && npm run eslint",
     "build": "npm run _pre-build && tsc",
+    "buildAndStart": "npm run build && npm run start",
     "start": "node ./dist/cjs/main.js"
   },
   "dependencies": {

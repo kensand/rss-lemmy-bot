@@ -70,32 +70,48 @@ export function mkFeedTask(
   let lastItemTime = startTime;
   return new AsyncTask(feed.feedUrl, async () => {
     console.log(
-      `Scanning feed ${feed.feedUrl} with latestTime: ${lastItemTime}`
+      `Scanning feed ${feed.feedUrl}. Latest Item in feed is ${lastItemTime}.`
     );
     const feedResults = await parser.parseURL(feed.feedUrl);
     const items = processFeedResults(startTime, feedResults);
-    await Promise.all(
-      items.map(async (item) => {
-        const title = item.title;
-        if (
-          title &&
-          item.timestamp &&
-          item.timestamp.getTime() > lastItemTime.getTime()
-        ) {
-          console.log(
-            `Posting item ${title} from ${feed.feedUrl} published at ${item.timestamp}`
-          );
-          await Promise.all(
-            feed.lemmyCommunities.map(async (community) => {
-              await postItem(client, community, item, title, authToken);
-            })
-          );
-        }
-      })
-    );
+    const postCount = (
+      await Promise.all(
+        items.map(async (item) => {
+          const title = item.title;
+          if (
+            title &&
+            item.timestamp &&
+            item.timestamp.getTime() > lastItemTime.getTime()
+          ) {
+            console.log(
+              `Posting item ${title} from ${feed.feedUrl} published at ${item.timestamp}`
+            );
+            await Promise.all(
+              feed.lemmyCommunities.map(async (community) => {
+                await postItem(client, community, item, title, authToken);
+              })
+            );
+            return true;
+          } else {
+            return false;
+          }
+        })
+      )
+    ).reduce((acc, curr) => acc + (curr ? 1 : 0), 0);
 
     const newLastTime =
       items.length > 0 ? items[items.length - 1]?.timestamp : undefined;
-    lastItemTime = newLastTime ? newLastTime : lastItemTime ?? startTime;
+
+    lastItemTime = new Date(
+      Math.max(
+        newLastTime?.getTime() ?? 0,
+        lastItemTime.getTime(),
+        startTime.getTime()
+      )
+    );
+
+    console.log(
+      `Finished scanning ${feed.feedUrl}. Posted ${postCount} items. Latest item in feed is from ${lastItemTime}.`
+    );
   });
 }
