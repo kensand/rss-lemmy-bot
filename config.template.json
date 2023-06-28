@@ -9,12 +9,30 @@
   "feeds": [
     {
       "feedUrl": "<some rss feed url>",
+      "schedule": {
+        "minutes": 15
+      },
       "lemmyCommunities": [
         {
-          "communityName": "<some community name>",
+          "communityName": "<some community name (what follows '/c/' in the url)>",
           "instanceUrl": "<some lemmy instance url, beginning with 'https://`"
         }
       ]
+    },
+    {
+      "feedUrl": "https://Some.Fake.Rss.Feed.URL.abcd1234567890/top_news.rss",
+      "schedule": {
+        "days": 2
+      },
+      "lemmyCommunities": [
+        {
+          "communityName": "the_news",
+          "instanceUrl": "https://Some.Fake.Lemmy.Instance.URL.abcd1234567890"
+        }
+      ]
     }
-  ]
+  ],
+  "defaultSchedule": {
+    "hours": 1
+  }
 }
