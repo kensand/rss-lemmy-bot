@@ -3,6 +3,7 @@ import { Community, Feed } from "./config";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { LemmyHttp } from "lemmy-js-client";
 import { AsyncTask } from "toad-scheduler";
+import { LRUCache } from "lru-cache";
 
 export function processFeedResults(
   minTimestamp: Date,
@@ -68,15 +69,27 @@ export function mkFeedTask(
   authToken: string
 ) {
   let lastItemTime = startTime;
+  const duplicateCache = new LRUCache<string, boolean>({ max: 1000 });
+
   return new AsyncTask(feed.feedUrl, async () => {
     console.log(
       `Scanning feed ${feed.feedUrl}. Latest Item in feed is ${lastItemTime}.`
     );
     const feedResults = await parser.parseURL(feed.feedUrl);
     const items = processFeedResults(startTime, feedResults);
+    const filteredItems = items.filter(
+      (it) =>
+        it.title &&
+        !duplicateCache.has(it.title) &&
+        (!it.link || duplicateCache.has(it.link))
+    );
+    items.forEach((it) => {
+      it.title && duplicateCache.set(it.title, true);
+      it.link && duplicateCache.set(it.link, true);
+    });
     const postCount = (
       await Promise.all(
-        items.map(async (item) => {
+        filteredItems.map(async (item) => {
           const title = item.title;
           if (
             title &&
