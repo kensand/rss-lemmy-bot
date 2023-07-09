@@ -81,7 +81,7 @@ export function mkFeedTask(
       (it) =>
         it.title &&
         !duplicateCache.has(it.title) &&
-        (!it.link || duplicateCache.has(it.link))
+        (!it.link || !duplicateCache.has(it.link))
     );
     items.forEach((it) => {
       it.title && duplicateCache.set(it.title, true);
