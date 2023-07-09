@@ -37,19 +37,21 @@ export async function postItem(
   client: LemmyHttp,
   c: Community,
   item: Parser.Item,
+  urlPrefix: string | undefined,
   title: string,
   token: string
 ) {
   const communityId = (await client.getCommunity({ name: c.communityName }))
     .community_view.community.id;
+  const link = item.link ? `${urlPrefix ?? ""}${item.link}` : undefined;
   const titleLink = item.title
-    ? item.link
-      ? `# [${item.title}](${item.link})\n`
+    ? link
+      ? `# [${item.title}](${link})\n`
       : `# ${item.title}\n`
     : "";
   await client.createPost({
     community_id: communityId,
-    url: item.link,
+    url: link,
     name: title,
     auth: token,
     body: `${titleLink}${NodeHtmlMarkdown.translate(
@@ -101,7 +103,14 @@ export function mkFeedTask(
             );
             await Promise.all(
               feed.lemmyCommunities.map(async (community) => {
-                await postItem(client, community, item, title, authToken);
+                await postItem(
+                  client,
+                  community,
+                  item,
+                  feed.linkPrefix,
+                  title,
+                  authToken
+                );
               })
             );
             return true;

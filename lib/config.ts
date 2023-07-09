@@ -6,6 +6,7 @@ export interface Community {
 }
 export interface Feed {
   readonly feedUrl: string;
+  readonly linkPrefix?: string;
   readonly lemmyCommunities: Community[];
   readonly schedule?: SimpleIntervalSchedule;
 }
