@@ -26,6 +26,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64v8
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rss-lemmy-bot:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/rss-lemmy-bot:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/rss-lemmy-bot:buildcache,mode=max
