@@ -41,30 +41,40 @@ export async function postItem(
   title: string,
   nsfw: boolean | undefined
 ) {
-  const communityId = (await client.getCommunity({ name: c.communityName }))
-    .community_view.community.id;
-  const link = item.link ? `${urlPrefix ?? ""}${item.link}` : undefined;
-  const titleLink = item.title
-    ? link
-      ? `# [${item.title}](${link})\n`
-      : `# ${item.title}\n`
-    : "";
+  try {
+    const communityId = (await client.getCommunity({ name: c.communityName }))
+      .community_view.community.id;
+    const link = item.link ? `${urlPrefix ?? ""}${item.link}` : undefined;
+    const titleLink = item.title
+      ? link
+        ? `# [${item.title}](${link})\n`
+        : `# ${item.title}\n`
+      : "";
 
-  if (title.length > 200) {
-      title = title.slice(0, 197) + '...';
+    if (title.length > 200) {
+        title = title.slice(0, 197) + '...';
+    }
+    const postResponse = await client.createPost({
+      community_id: communityId,
+      url: link,
+      name: title,
+      nsfw: nsfw,
+      body: `${titleLink}${NodeHtmlMarkdown.translate(
+        item.content ?? item.contentSnippet ?? item.summary ?? "",
+        {},
+        undefined,
+        undefined
+      )}`,
+    });
+    if (!postResponse.post_view.post.ap_id) {
+      throw new Error(`Failed to post ${postResponse}`);
+    }
+    return
   }
-  await client.createPost({
-    community_id: communityId,
-    url: link,
-    name: title,
-    nsfw: nsfw,
-    body: `${titleLink}${NodeHtmlMarkdown.translate(
-      item.content ?? item.contentSnippet ?? item.summary ?? "",
-      {},
-      undefined,
-      undefined
-    )}`,
-  });
+  catch (error) {
+    console.log(`An error occurred during the post creation process.
+      It is uncertain whether the post was successfully created. ${error}`);
+  }
 }
 
 export function mkFeedTask(
