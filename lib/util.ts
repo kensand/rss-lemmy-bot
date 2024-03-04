@@ -49,6 +49,10 @@ export async function postItem(
       ? `# [${item.title}](${link})\n`
       : `# ${item.title}\n`
     : "";
+
+  if (title.length > 200) {
+      title = title.slice(0, 197) + '...';
+  }
   await client.createPost({
     community_id: communityId,
     url: link,
