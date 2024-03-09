@@ -7,7 +7,7 @@ import { LRUCache } from "lru-cache";
 
 export function processFeedResults(
   minTimestamp: Date,
-  feedResults: Parser.Output<Record<string, never>>
+  feedResults: Parser.Output<Record<string, never>>,
 ): (Parser.Item & {
   readonly timestamp: Date;
 })[] {
@@ -18,8 +18,8 @@ export function processFeedResults(
         timestamp: it.isoDate
           ? new Date(it.isoDate)
           : it.pubDate
-          ? new Date(it.pubDate)
-          : minTimestamp,
+            ? new Date(it.pubDate)
+            : minTimestamp,
       };
     })
     .sort((a, b) => {
@@ -39,7 +39,7 @@ export async function postItem(
   item: Parser.Item,
   urlPrefix: string | undefined,
   title: string,
-  nsfw: boolean | undefined
+  nsfw: boolean | undefined,
 ) {
   try {
     const communityId = (await client.getCommunity({ name: c.communityName }))
@@ -52,7 +52,7 @@ export async function postItem(
       : "";
 
     if (title.length > 200) {
-        title = title.slice(0, 197) + '...';
+      title = title.slice(0, 197) + "...";
     }
     const postResponse = await client.createPost({
       community_id: communityId,
@@ -63,15 +63,14 @@ export async function postItem(
         item.content ?? item.contentSnippet ?? item.summary ?? "",
         {},
         undefined,
-        undefined
+        undefined,
       )}`,
     });
     if (!postResponse.post_view.post.ap_id) {
       throw new Error(`Failed to post ${postResponse}`);
     }
-    return
-  }
-  catch (error) {
+    return;
+  } catch (error) {
     console.log(`An error occurred during the post creation process.
       It is uncertain whether the post was successfully created. ${error}`);
   }
@@ -81,14 +80,14 @@ export function mkFeedTask(
   startTime: Date,
   client: LemmyHttp,
   feed: Feed,
-  parser: Parser<Record<string, never>, Record<string, never>>
+  parser: Parser<Record<string, never>, Record<string, never>>,
 ) {
   let lastItemTime = startTime;
   const duplicateCache = new LRUCache<string, boolean>({ max: 1000 });
 
   return new AsyncTask(feed.feedUrl, async () => {
     console.log(
-      `Scanning feed ${feed.feedUrl}. Latest Item in feed is ${lastItemTime}.`
+      `Scanning feed ${feed.feedUrl}. Latest Item in feed is ${lastItemTime}.`,
     );
     const feedResults = await parser.parseURL(feed.feedUrl);
     const items = processFeedResults(startTime, feedResults);
@@ -96,7 +95,7 @@ export function mkFeedTask(
       (it) =>
         it.title &&
         !duplicateCache.has(it.title) &&
-        (!it.link || !duplicateCache.has(it.link))
+        (!it.link || !duplicateCache.has(it.link)),
     );
     items.forEach((it) => {
       it.title && duplicateCache.set(it.title, true);
@@ -112,7 +111,7 @@ export function mkFeedTask(
             item.timestamp.getTime() > lastItemTime.getTime()
           ) {
             console.log(
-              `Posting item ${title} from ${feed.feedUrl} published at ${item.timestamp}`
+              `Posting item ${title} from ${feed.feedUrl} published at ${item.timestamp}`,
             );
             await Promise.all(
               feed.lemmyCommunities.map(async (community) => {
@@ -122,15 +121,15 @@ export function mkFeedTask(
                   item,
                   feed.linkPrefix,
                   title,
-                  feed.nsfw
+                  feed.nsfw,
                 );
-              })
+              }),
             );
             return true;
           } else {
             return false;
           }
-        })
+        }),
       )
     ).reduce((acc, curr) => acc + (curr ? 1 : 0), 0);
 
@@ -141,12 +140,12 @@ export function mkFeedTask(
       Math.max(
         newLastTime?.getTime() ?? 0,
         lastItemTime.getTime(),
-        startTime.getTime()
-      )
+        startTime.getTime(),
+      ),
     );
 
     console.log(
-      `Finished scanning ${feed.feedUrl}. Posted ${postCount} items. Latest item in feed is from ${lastItemTime}.`
+      `Finished scanning ${feed.feedUrl}. Posted ${postCount} items. Latest item in feed is from ${lastItemTime}.`,
     );
   });
 }

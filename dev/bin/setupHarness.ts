@@ -27,10 +27,10 @@ import fs from "fs";
           console.log(`Created community ${community.communityName}`);
         } catch (e) {
           console.log(
-            `Failed to create community ${community.communityName}: ${e}`
+            `Failed to create community ${community.communityName}: ${e}`,
           );
         }
       });
-    })
+    }),
   );
 })();

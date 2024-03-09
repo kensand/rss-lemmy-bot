@@ -10,9 +10,11 @@ const startTimeEnv = process.env["START_TIME"];
 const startTime = startTimeEnv ? new Date(startTimeEnv) : new Date();
 if (startTimeEnv) {
   console.log("START_TIME found and translated to:", startTime.toString());
-}
-else {
-  console.log("START_TIME not set. Starting tracking at current date:", startTime.toString());
+} else {
+  console.log(
+    "START_TIME not set. Starting tracking at current date:",
+    startTime.toString(),
+  );
 }
 
 const config: Config = JSON.parse(fs.readFileSync(configPath).toString());
@@ -39,7 +41,7 @@ client.login(config.lemmy.login).then((loginResponse) => {
     const job = new SimpleIntervalJob(
       { ...(feed.schedule ?? defaultSchedule), runImmediately: true },
       task,
-      {}
+      {},
     );
     scheduler.addSimpleIntervalJob(job);
   });
