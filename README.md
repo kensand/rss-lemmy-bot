@@ -16,6 +16,9 @@ If running locally, ensure `NodeJS >= 20` is installed.
 
 Otherwise, docker and docker-compose may be desired.
 
+After creating your Lemmy bot account on the server, go into the settings for the user and check
+the "bot account" checkbox.
+
 ### Configuration
 
 Copy `config.template.json` to `config.json` and configure it.
