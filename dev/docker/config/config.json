@@ -1,0 +1,23 @@
+{
+  "lemmy": {
+    "login": {
+      "username_or_email": "admin",
+      "password": "testpassword"
+    },
+    "instanceUrl": "http://127.0.0.1"
+  },
+  "feeds": [
+    {
+      "feedUrl": "http://rss.cnn.com/rss/cnn_topstories.rss",
+      "schedule": {
+        "minutes": 1
+      },
+      "lemmyCommunities": [
+        {
+          "communityName": "testcommunity",
+          "instanceUrl": "http://127.0.0.1"
+        }
+      ]
+    }
+  ]
+}
