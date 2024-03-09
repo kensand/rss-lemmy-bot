@@ -68,12 +68,13 @@ docker stack deploy -c dev/docker/docker-compose.yml rss-lemmy-bot-harness
 This will start a lemmy server on your localhost available at [127.0.0.1:80](127.0.0.1:80).
 
 You will need to create the relevant communities in the test harness. A utility script is provided for this:
+
 ```shell
 CONFIG_PATH=./dev/config.json \
 npm run setupHarness
 ```
 
-### Running
+### Running Locally
 
 If you are using the test harness, you can use a provided dev config [./dev/config.json](./dev/config.json)
 
@@ -83,5 +84,14 @@ START_TIME=0 \
 npm run start
 ```
 
+### Building Docker Image
 
+```shell
+docker build . -t rss-lemmy-bot:dev
+```
 
+### Running Docker Image
+
+```shell
+docker run -v "./dev/config.json:/rss-lemmy-bot/config.json" -e START_TIME=0 --network host rss-lemmy-bot:latest
+```
