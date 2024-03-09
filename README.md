@@ -32,20 +32,53 @@ You may override the `defaultSchedule` and the feed-specific `schedule` using a 
 
 One time setup:
 
-```
+```shell
 npm install && npm run build
 ```
 
 Startup:
 
-```
+```shell
 npm run start
 ```
 
 ### Docker
 
-`docker run -v './config.json:/rss-lemmy-bot/config.json' -t kensand/rss-lemmy-bot`
+```shell
+docker run -v './config.json:/rss-lemmy-bot/config.json' -t kensand/rss-lemmy-bot
+```
 
 ### Docker Compose
 
 See [docker-compose.yml](./docker-compose.yml)
+
+## Development
+
+### Harness
+
+A docker-compose.yml file to act as a test harness is available in [./dev/docker](./dev/docker).
+
+```shell
+docker stack deploy -c dev/docker/docker-compose.yml rss-lemmy-bot-harness
+```
+
+This will start a lemmy server on your localhost available at [127.0.0.1:80](127.0.0.1:80).
+
+You will need to create the relevant communities in the test harness. A utility script is provided for this:
+```shell
+CONFIG_PATH=./dev/config.json \
+npm run setupHarness
+```
+
+### Running
+
+If you are using the test harness, you can use a provided dev config [./dev/config.json](./dev/config.json)
+
+```shell
+CONFIG_PATH=./dev/config.json \
+START_TIME=0 \
+npm run start
+```
+
+
+

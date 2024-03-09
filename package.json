@@ -7,6 +7,7 @@
     "eslint": "npx eslint --fix .",
     "_pre-build": "npm run prettier && npm run eslint",
     "build": "npm run _pre-build && tsc",
+    "setupHarness" : "ts-node dev/bin/setupHarness.ts",
     "clean": "rm -rf dist",
     "buildImage": "tsc",
     "buildAndStart": "npm run build && npm run start",
@@ -25,7 +26,8 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.60.0",
     "eslint": "^8.57.0",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "ts-node": "^10.9.2"
   },
   "files": [
     "./webpack/**",
