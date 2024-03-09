@@ -21,11 +21,15 @@ client.login(config.lemmy.login).then((loginResponse) => {
     throw "Failed to login";
   }
 
+  client.setHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+
   const scheduler = new ToadScheduler();
   const parser = new Parser<Record<string, never>, Record<string, never>>();
 
   config.feeds.forEach((feed) => {
-    const task = mkFeedTask(startTime, client, feed, parser, token);
+    const task = mkFeedTask(startTime, client, feed, parser);
     const job = new SimpleIntervalJob(
       { ...(feed.schedule ?? defaultSchedule), runImmediately: true },
       task,

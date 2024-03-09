@@ -38,8 +38,7 @@ export async function postItem(
   c: Community,
   item: Parser.Item,
   urlPrefix: string | undefined,
-  title: string,
-  token: string
+  title: string
 ) {
   const communityId = (await client.getCommunity({ name: c.communityName }))
     .community_view.community.id;
@@ -53,7 +52,6 @@ export async function postItem(
     community_id: communityId,
     url: link,
     name: title,
-    auth: token,
     body: `${titleLink}${NodeHtmlMarkdown.translate(
       item.content ?? item.contentSnippet ?? item.summary ?? "",
       {},
@@ -67,8 +65,7 @@ export function mkFeedTask(
   startTime: Date,
   client: LemmyHttp,
   feed: Feed,
-  parser: Parser<Record<string, never>, Record<string, never>>,
-  authToken: string
+  parser: Parser<Record<string, never>, Record<string, never>>
 ) {
   let lastItemTime = startTime;
   const duplicateCache = new LRUCache<string, boolean>({ max: 1000 });
@@ -103,14 +100,7 @@ export function mkFeedTask(
             );
             await Promise.all(
               feed.lemmyCommunities.map(async (community) => {
-                await postItem(
-                  client,
-                  community,
-                  item,
-                  feed.linkPrefix,
-                  title,
-                  authToken
-                );
+                await postItem(client, community, item, feed.linkPrefix, title);
               })
             );
             return true;
