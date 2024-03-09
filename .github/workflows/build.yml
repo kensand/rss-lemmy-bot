@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - run: npm i
+      - run: npm run build
