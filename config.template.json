@@ -29,7 +29,8 @@
           "communityName": "the_news",
           "instanceUrl": "https://Some.Fake.Lemmy.Instance.URL.abcd1234567890"
         }
-      ]
+      ],
+      "nsfw": true
     }
   ],
   "defaultSchedule": {

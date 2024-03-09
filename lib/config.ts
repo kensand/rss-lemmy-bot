@@ -9,6 +9,7 @@ export interface Feed {
   readonly linkPrefix?: string;
   readonly lemmyCommunities: Community[];
   readonly schedule?: SimpleIntervalSchedule;
+  readonly nsfw?: boolean;
 }
 export interface Lemmy {
   readonly login: Login;

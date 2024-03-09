@@ -38,7 +38,8 @@ export async function postItem(
   c: Community,
   item: Parser.Item,
   urlPrefix: string | undefined,
-  title: string
+  title: string,
+  nsfw: boolean | undefined
 ) {
   const communityId = (await client.getCommunity({ name: c.communityName }))
     .community_view.community.id;
@@ -52,6 +53,7 @@ export async function postItem(
     community_id: communityId,
     url: link,
     name: title,
+    nsfw: nsfw,
     body: `${titleLink}${NodeHtmlMarkdown.translate(
       item.content ?? item.contentSnippet ?? item.summary ?? "",
       {},
@@ -100,7 +102,14 @@ export function mkFeedTask(
             );
             await Promise.all(
               feed.lemmyCommunities.map(async (community) => {
-                await postItem(client, community, item, feed.linkPrefix, title);
+                await postItem(
+                  client,
+                  community,
+                  item,
+                  feed.linkPrefix,
+                  title,
+                  feed.nsfw
+                );
               })
             );
             return true;
