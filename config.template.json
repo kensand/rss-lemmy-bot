@@ -30,7 +30,12 @@
           "instanceUrl": "https://Some.Fake.Lemmy.Instance.URL.abcd1234567890"
         }
       ],
-      "nsfw": true
+      "nsfw": true,
+      "format": {
+        "title": "Look at this title!: {{{title}}}",
+        "url": "{{#link}}web.archive.org/{{{link}}}{{/link}}",
+        "body": "Look at this title!: {{{summary}}}"
+      }
     }
   ],
   "defaultSchedule": {
