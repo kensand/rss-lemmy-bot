@@ -13,7 +13,7 @@
     "start": "node ./dist/cjs/main.js"
   },
   "dependencies": {
-    "lemmy-js-client": "^0.20.0-private-community.9",
+    "lemmy-js-client": "^0.20.0-reports-combined.3",
     "node-html-markdown": "^1.3.0",
     "rss-parser": "^3.13.0",
     "toad-scheduler": "^3.0.1",
