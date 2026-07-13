@@ -16,7 +16,7 @@
     "lemmy-js-client": "^0.20.0-show-mod-reports.2",
     "node-html-markdown": "^2.0.0",
     "rss-parser": "^3.13.0",
-    "toad-scheduler": "^4.0.1",
+    "toad-scheduler": "^4.1.0",
     "lru-cache": "^11.5.2",
     "mustache": "^4.2.0"
   },
