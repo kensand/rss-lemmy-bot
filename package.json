@@ -24,7 +24,7 @@
     "typescript": "^7.0.2",
     "@types/mustache": "^4.2.6",
     "@types/node": "^26.6.4",
-    "@typescript-eslint/eslint-plugin": "^8.70.1",
+    "@typescript-eslint/eslint-plugin": "^8.71.0",
     "@typescript-eslint/parser": "^8.71.0",
     "eslint": "^10.11.0",
     "prettier": "^3.9.9",
